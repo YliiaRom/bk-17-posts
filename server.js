@@ -8,7 +8,7 @@ import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/users.js";
 import postRoutes from "./routes/posts.js";
 import commentRoutes from "./routes/comments.js";
-
+const PORT = process.env.PORT || 4000;
 dotenv.config();
 
 const app = express();
@@ -34,4 +34,4 @@ app.use("/api/users", userRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/comments", commentRoutes);
 
-app.listen(4000, () => console.log("API on http://localhost:4000"));
+app.listen(PORT, () => console.log(`API running on port ${PORT}`));

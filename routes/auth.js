@@ -44,12 +44,23 @@ router.post("/login", async (req, res) => {
   const refreshToken = generateRefreshToken(user);
 
   // 6. Відправляємо refreshToken у httpOnly cookie, а accessToken і дані користувача — у відповідь
+  //   res
+  //     .cookie("refreshToken", refreshToken, {
+  //       httpOnly: true,
+  //       secure: true,
+  //       sameSite: "None",
+  //       maxAge: 7 * 24 * 60 * 60 * 1000,
+  //     })
+  //     .json({
+  //       user: { id: user.id, email: user.email, role: user.role },
+  //       accessToken,
+  //     });
   res
     .cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: true, // у проді — true
-      sameSite: "None",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      secure: process.env.NODE_ENV === "production", // ✅ true на проде, false локально
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax", // ✅ кросс-домен на проде, локально можно Lax
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 дней
     })
     .json({
       user: { id: user.id, email: user.email, role: user.role },
@@ -84,8 +95,20 @@ router.post("/refresh", async (req, res) => {
   }
 });
 
+// router.post("/logout", (req, res) => {
+//   res.clearCookie("refreshToken", {
+//     httpOnly: true,
+//     secure: true,
+//     sameSite: "None",
+//   });
+//   res.sendStatus(204);
+// });
 router.post("/logout", (req, res) => {
-  res.clearCookie("refreshToken");
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+  });
   res.sendStatus(204);
 });
 
