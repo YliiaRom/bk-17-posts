@@ -48,7 +48,7 @@ router.post("/login", async (req, res) => {
     .cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: true, // у проді — true
-      sameSite: "strict",
+      sameSite: "None",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     })
     .json({
